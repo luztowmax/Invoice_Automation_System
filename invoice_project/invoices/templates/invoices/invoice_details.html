@@ -36,13 +36,15 @@
             </tr>
         </thead>
         <tbody>
+            {% for item in invoice.items.all %}
             <tr>
-                <td>1</td>
-                <td>{{ invoice.description }}</td>
-                <td>{{ invoice.quantity }}</td>
-                <td>{{ invoice.unit_price|floatformat:2 }}</td>
-                <td>{{ invoice.total_amount|floatformat:2 }}</td>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit_price|floatformat:2 }}</td>
+                <td>{{ item.total_amount|floatformat:2 }}</td>
             </tr>
+            {% endfor %}
         </tbody>
     </table>
 

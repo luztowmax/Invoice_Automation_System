@@ -5,16 +5,21 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         h1 { color: green; }
-        form { max-width: 500px; margin-top: 20px; }
+        form { max-width: 800px; margin-top: 20px; }
+        .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input[type="text"], input[type="number"] { width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
-        button { background-color: green; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        input[type="text"], input[type="number"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .item-form { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; background-color: #f9f9f9; }
+        .delete-checkbox { display: inline-block; margin-left: 10px; }
+        button { background-color: green; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px; }
         button:hover { background-color: darkgreen; }
+        .add-item { background-color: blue; }
+        .add-item:hover { background-color: darkblue; }
         .back-link { margin-top: 20px; }
     </style>
 </head>
 <body>
-    <img src="/static/luztow_logo.jpg" width="150" alt="Luztow Logo">
+    <img src="/static/luztow logo.jpg" width="150" alt="Luztow Logo">
     <h1>Luztow Resources Ltd</h1>
     <p>22 Bornu Crescent, Apapa, Lagos</p>
 
@@ -30,12 +35,53 @@
 
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-group">
+            {{ form.partner_name.label_tag }}
+            {{ form.partner_name }}
+        </div>
+
+        <h3>Items</h3>
+        {{ formset.management_form }}
+        <div id="items-container">
+            {% for form in formset %}
+                <div class="item-form">
+                    {{ form.id }}
+                    <div class="form-group">
+                        {{ form.description.label_tag }}
+                        {{ form.description }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.quantity.label_tag }}
+                        {{ form.quantity }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.unit_price.label_tag }}
+                        {{ form.unit_price }}
+                    </div>
+                    {{ form.DELETE }}
+                    <label class="delete-checkbox">Delete this item</label>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="button" class="add-item" onclick="addItem()">Add Another Item</button>
         <button type="submit">Create Invoice</button>
     </form>
 
     <div class="back-link">
         <a href="{% url 'invoice_list' %}">Back to Invoice List</a>
     </div>
+
+    <script>
+        function addItem() {
+            const container = document.getElementById('items-container');
+            const totalForms = document.querySelector('input[name$="-TOTAL_FORMS"]');
+            const formNum = parseInt(totalForms.value);
+            const newForm = container.querySelector('.item-form').cloneNode(true);
+            const formRegex = RegExp(`form-(\\d+)-`, 'g');
+            newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`);
+            container.appendChild(newForm);
+            totalForms.value = formNum + 1;
+        }
+    </script>
 </body>
 </html>

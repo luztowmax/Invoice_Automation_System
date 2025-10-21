@@ -6,8 +6,8 @@ from reportlab.lib import colors
 from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle, Image, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-from .models import Invoice
-from .forms import InvoiceForm
+from .models import Invoice, InvoiceItem
+from .forms import InvoiceForm, InvoiceItemFormSet
 import io
 import os
 from decimal import Decimal
@@ -21,16 +21,19 @@ def invoice_list(request):
 def create_invoice(request):
     if request.method == 'POST':
         form = InvoiceForm(request.POST)
-        if form.is_valid():
-            invoice = form.save(commit=False)
-            # Calculate total_amount
-            invoice.total_amount = invoice.quantity * invoice.unit_price
-            invoice.save()
+        formset = InvoiceItemFormSet(request.POST)
+        if form.is_valid() and formset.is_valid():
+            invoice = form.save()
+            items = formset.save(commit=False)
+            for item in items:
+                item.invoice = invoice
+                item.save()
             messages.success(request, f'Invoice #{invoice.invoice_number} created successfully!')
             return redirect('invoice_detail', invoice.invoice_number)
     else:
         form = InvoiceForm()
-    return render(request, 'invoices/create_invoice.html', {'form': form})
+        formset = InvoiceItemFormSet(queryset=InvoiceItem.objects.none())
+    return render(request, 'invoices/create_invoice.html', {'form': form, 'formset': formset})
 
 
 def invoice_detail(request, invoice_id):
@@ -92,10 +95,9 @@ def invoice_pdf(request, invoice_id):
     vat = subtotal * Decimal('0.075')
     grand_total = subtotal + vat
 
-    data = [
-        ["S/N", "Description", "Qty", "Unit Price (₦)", "Total (₦)"],
-        [1, invoice.description, invoice.quantity, f"{invoice.unit_price:,.2f}", f"{subtotal:,.2f}"]
-    ]
+    data = [["S/N", "Description", "Qty", "Unit Price (₦)", "Total (₦)"]]
+    for i, item in enumerate(invoice.items.all(), start=1):
+        data.append([i, item.description, item.quantity, f"{item.unit_price:,.2f}", f"{item.total_amount:,.2f}"])
 
     table = Table(data, colWidths=[40, 200, 50, 100, 100])
     table.setStyle(TableStyle([
