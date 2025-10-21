@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice List - Luztow Resources Ltd</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: green; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        a { text-decoration: none; color: blue; }
+        a:hover { text-decoration: underline; }
+        .create-btn { background-color: green; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <img src="/static/luztow_logo.jpg" width="150" alt="Luztow Logo">
+    <h1>Luztow Resources Ltd</h1>
+    <p>22 Bornu Crescent, Apapa, Lagos</p>
+
+    <h2>Invoice List</h2>
+    <a href="{% url 'create_invoice' %}" class="create-btn">Create New Invoice</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Invoice No</th>
+                <th>Partner</th>
+                <th>Date Created</th>
+                <th>Total Amount</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in invoices %}
+            <tr>
+                <td>{{ invoice.invoice_number }}</td>
+                <td>{{ invoice.partner_name }}</td>
+                <td>{{ invoice.date_created|date:"Y-m-d H:i" }}</td>
+                <td>₦{{ invoice.total_amount|floatformat:2 }}</td>
+                <td>
+                    <a href="{% url 'invoice_detail' invoice.invoice_number %}">View</a> |
+                    <a href="{% url 'invoice_pdf' invoice.invoice_number %}">Download PDF</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No invoices found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

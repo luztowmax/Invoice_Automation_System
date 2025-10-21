@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice #{{ invoice.invoice_number }} - Luztow Resources Ltd</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: green; }
+        h2 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .totals { margin-top: 20px; font-weight: bold; }
+        .download-btn { background-color: green; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
+        .back-link { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <img src="/static/luztow logo.jpg" width="150" alt="Luztow Logo">
+    <h1>Luztow Resources Ltd</h1>
+    <p>22 Bornu Crescent, Apapa, Lagos</p>
+    <p>support@luztowresources.com | +234 903 292 4589</p>
+
+    <h2>Invoice Details</h2>
+    <p><strong>Invoice No:</strong> INV{{ invoice.invoice_number|add:"0"|slice:"1:" }}</p>
+    <p><strong>Partner:</strong> {{ invoice.partner_name }}</p>
+    <p><strong>Date:</strong> {{ invoice.date_created|date:"Y-m-d H:i:s" }}</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>S/N</th>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit Price (₦)</th>
+                <th>Total (₦)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>{{ invoice.description }}</td>
+                <td>{{ invoice.quantity }}</td>
+                <td>{{ invoice.unit_price|floatformat:2 }}</td>
+                <td>{{ invoice.total_amount|floatformat:2 }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="totals">
+    <p>Subtotal: ₦{{ invoice.total_amount|floatformat:2 }}</p>
+    <p>VAT (7.5%): ₦{{ vat|floatformat:2 }}</p>
+    <p><strong>Grand Total: ₦{{ grand_total|floatformat:2 }}</strong></p>
+</div>
+
+
+    <p><strong>Thank you for your business!</strong></p>
+
+    <a href="{% url 'invoice_pdf' invoice.pk %}" class="download-btn">Download PDF</a>
+
+    <div class="back-link">
+        <a href="{% url 'invoice_list' %}">Back to Invoice List</a>
+    </div>
+</body>
+</html>
