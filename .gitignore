@@ -1,0 +1,15 @@
+invoice_env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+*.log
+*.bak
+.env
+*.pdf
+.idea/
+.vscode/
+.DS_Store
+
