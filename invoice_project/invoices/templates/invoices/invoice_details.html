@@ -24,6 +24,8 @@
 
     <h2>Invoice Details</h2>
     <p><strong>Invoice No:</strong> INV{{ invoice.invoice_number|add:"0"|slice:"1:" }}</p>
+    <p><strong>TIN NO: 33563692-0001</strong></p>
+    <p><strong>VAT NO: SLV: 090028864666</strong></p>
     <p><strong>Partner:</strong> {{ invoice.partner_name }}</p>
     <p><strong>Date:</strong> {{ invoice.date_created|date:"Y-m-d H:i:s" }}</p>
 
