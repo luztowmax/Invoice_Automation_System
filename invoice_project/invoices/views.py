@@ -86,6 +86,8 @@ def invoice_pdf(request, invoice_id):
 
     # Invoice details
     elements.append(Paragraph(f"<b>Invoice No:</b> INV{invoice.invoice_number:03d}", styles["Normal"]))
+    elements.append(Paragraph(f"<b>TIN NO: 33563692-0001</b>", styles["Normal"]))
+    elements.append(Paragraph(f"<b>VAT NO: SLV: 090028864666</b>", styles["Normal"]))
     elements.append(Paragraph(f"<b>Partner:</b> {invoice.partner_name}", styles["Normal"]))
     elements.append(Paragraph(f"<b>Date:</b> {invoice.date_created.strftime('%Y-%m-%d %H:%M:%S')}", styles["Normal"]))
     elements.append(Spacer(1, 12))
